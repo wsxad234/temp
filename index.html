@@ -15,7 +15,7 @@
                 const fallbackUrl = 'https://www.meituan.com';
                 
                 // 直接尝试跳转APP
-                window.location.href = appScheme;
+                window.location = appScheme;
                 
                 // 备用跳转（如果APP未安装）
                 setTimeout(() => {
