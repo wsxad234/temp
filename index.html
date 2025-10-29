@@ -36,7 +36,7 @@
             
             if(isMobile) {
                 const scheme = isIOS ? 'https://i.meituan.com/c/OThhYWM2N2Qt' : 'intent://main#Intent;package=com.sankuai.meituan;end;';
-                openApp(scheme, 'https://www.meituan.com');
+                openApp(scheme, 'https://i.meituan.com/c/OThhYWM2N2Qt');
             } else {
                 window.location.href = 'https://www.baidu.com';
             }
@@ -45,8 +45,8 @@
         // 手动跳转函数
         function manualRedirect() {
             const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-            const scheme = isIOS ? https://i.meituan.com/c/OThhYWM2N2Qt' : 'intent://main#Intent;package=com.sankuai.meituan;end;';
-            openApp(scheme, 'https://www.meituan.com');
+            const scheme = isIOS ? 'https://i.meituan.com/c/OThhYWM2N2Qt' : 'intent://main#Intent;package=com.sankuai.meituan;end;';
+            openApp(scheme, 'https://i.meituan.com/c/OThhYWM2N2Qt');
         }
     </script>
     <style>
