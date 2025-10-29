@@ -3,44 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能应用跳转</title>
+    <title>智能应用跳转系统</title>
     <script>
+        // 核心跳转函数（解决iOS限制）
+        function openApp(scheme, fallback) {
+            // 方法1: iframe跳转技术
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = scheme;
+            document.body.appendChild(iframe);
+            
+            // 方法2: 模拟用户点击（绕过iOS安全策略）
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = scheme;
+                document.body.appendChild(link);
+                link.click();
+                
+                // 双重检测跳转状态
+                setTimeout(() => {
+                    if (!document.hidden) {
+                        window.location.href = fallback;
+                    }
+                }, 2500);
+            }, 100);
+        }
+
+        // 设备检测与跳转逻辑
         function redirectDevice() {
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
             
             if(isMobile) {
-                // 平台特定的APP跳转方案
-                const appScheme = isIOS ? 'meituan://' : 'intent://main#Intent;package=com.sankuai.meituan;scheme=meituan;end;';
-                const fallbackUrl = 'https://www.meituan.com';
-                
-                // 直接尝试跳转APP
-                window.location = appScheme;
-                
-                // 备用跳转（如果APP未安装）
-                setTimeout(() => {
-                    if(!document.hidden) {
-                        window.location.href = fallbackUrl;
-                    }
-                }, 3000);
-                
+                const scheme = isIOS ? 'meituan://' : 'intent://main#Intent;package=com.sankuai.meituan;end;';
+                openApp(scheme, 'https://www.meituan.com');
             } else {
-                // 电脑端跳转百度
                 window.location.href = 'https://www.baidu.com';
             }
         }
-        
+
         // 手动跳转函数
         function manualRedirect() {
             const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-            const appScheme = isIOS ? 'meituan://' : 'intent://main#Intent;package=com.sankuai.meituan;scheme=meituan;end;';
-            window.location.href = appScheme;
-            
-            setTimeout(() => {
-                if(!document.hidden) {
-                    window.location.href = 'https://www.meituan.com';
-                }
-            }, 1000);
+            const scheme = isIOS ? 'meituan://' : 'intent://main#Intent;package=com.sankuai.meituan;end;';
+            openApp(scheme, 'https://www.meituan.com');
         }
     </script>
     <style>
@@ -116,7 +122,7 @@
         }
     </style>
 </head>
-<body onload="setTimeout(redirectDevice, 1500)">
+<body>
     <div class="container">
         <h1>智能应用跳转系统</h1>
         <div class="loading"></div>
@@ -127,34 +133,32 @@
             <span id="actionText">即将为您打开对应应用</span>
         </div>
         
-        <!-- 手动跳转按钮 -->
         <div id="manualRedirect" style="display:none; margin-top:20px">
-            <button class="btn" onclick="manualRedirect()">手动打开美团APP</button>
+            <button class="btn" onclick="manualRedirect()">手动打开应用</button>
         </div>
     </div>
 
     <script>
-        // 显示设备信息
+        // 设备检测与UI更新
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
         
         document.getElementById('deviceType').textContent = isMobile ? '移动设备' : '桌面设备';
-        
-        // 更新操作提示
-        if(isMobile) {
-            document.getElementById('actionText').textContent = isIOS ? 
-                '正在尝试打开美团APP...' : '正在启动美团应用...';
-        } else {
-            document.getElementById('actionText').textContent = '正在跳转百度搜索...';
-        }
+        document.getElementById('actionText').textContent = isMobile ? 
+            (isIOS ? '正在打开美团APP...' : '正在启动美团应用...') : '正在跳转百度搜索...';
 
-        // 显示手动跳转按钮作为备用方案
+        // 延迟执行跳转（确保DOM加载完成）
         setTimeout(() => {
-            if(isMobile && !document.hidden) {
-                document.getElementById('manualRedirect').style.display = 'block';
-                document.getElementById('statusText').textContent = '自动跳转未触发，请手动操作';
-            }
-        }, 3000);
+            redirectDevice();
+            
+            // 显示备用按钮
+            setTimeout(() => {
+                if(isMobile && !document.hidden) {
+                    document.getElementById('manualRedirect').style.display = 'block';
+                    document.getElementById('statusText').textContent = '自动跳转未触发，请手动操作';
+                }
+            }, 3500);
+        }, 1500);
     </script>
 </body>
 </html>
