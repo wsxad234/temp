@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信跳转助手</title>
+    <script>
+        function openWechat() {
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // 微信的URL Scheme
+                const wechatScheme = 'weixin://';
+                // 微信官方下载页面
+                const fallbackUrl = 'https://weixin.qq.com/';
+                
+                // iOS设备使用双重跳转技术
+                if (isIOS) {
+                    // 方法1: iframe跳转
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = wechatScheme;
+                    document.body.appendChild(iframe);
+                    
+                    // 方法2: 模拟用户点击
+                    setTimeout(() => {
+                        const link = document.createElement('a');
+                        link.href = wechatScheme;
+                        document.body.appendChild(link);
+                        link.click();
+                    }, 100);
+                } 
+                // Android设备直接跳转
+                else {
+                    window.location.href = wechatScheme;
+                }
+                
+                // 跳转失败处理
+                setTimeout(() => {
+                    if (!document.hidden) {
+                        document.getElementById('status').textContent = '跳转失败，正在打开微信下载页面...';
+                        window.location.href = fallbackUrl;
+                    }
+                }, 2000);
+                
+            } else {
+                document.getElementById('status').textContent = '请在手机浏览器中打开此页面';
+            }
+        }
+        
+        // 手动跳转函数
+        function manualOpen() {
+            openWechat();
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #07c160, #09bb07);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            width: 90%;
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 20px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo-inner {
+            width: 80px;
+            height: 80px;
+            background: #07c160;
+            border-radius: 15px;
+            position: relative;
+        }
+        .logo-inner::before, .logo-inner::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 2px;
+        }
+        .logo-inner::before {
+            width: 60px;
+            height: 12px;
+            top: 22px;
+            left: 10px;
+        }
+        .logo-inner::after {
+            width: 12px;
+            height: 40px;
+            top: 22px;
+            left: 34px;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .loading {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1.2s linear infinite;
+            margin: 20px 0;
+        }
+        .status {
+            font-size: 18px;
+            margin: 20px 0;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 30px;
+            margin: 15px 0;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        .tip {
+            margin-top: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body onload="setTimeout(openWechat, 1000)">
+    <div class="container">
+        <div class="logo">
+            <div class="logo-inner"></div>
+        </div>
+        <h1>微信跳转助手</h1>
+        <div class="loading"></div>
+        <div class="status" id="status">正在为您打开微信APP...</div>
+        
+        <button class="btn" onclick="manualOpen()">手动打开微信</button>
+        
+        <div class="tip">
+            <p>如果无法自动打开，请点击上方按钮手动跳转</p>
+            <p>未安装微信将跳转到下载页面</p>
+        </div>
+    </div>
+
+    <script>
+        // 显示设备信息
+        const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        
+        if (!isMobile) {
+            document.getElementById('status').textContent = '请在手机浏览器中打开此页面';
+        }
+    </script>
+</body>
+</html>
